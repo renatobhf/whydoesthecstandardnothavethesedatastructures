@@ -8,7 +8,7 @@
 #define DYNAMIC_ARRAY_GROWTH_FACTOR 2
 #endif
 
-#define IMPLEMENT_DYN_ARRAY(TYPE, EMPTY_TYPE)                                                                           \
+#define IMPLEMENT_DYN_ARRAY(TYPE, EMPTY_TYPE)                                                                        \
     typedef struct dyn_array_##TYPE##_t {                                                                            \
         TYPE *data;                                                                                                  \
         size_t size;                                                                                                 \

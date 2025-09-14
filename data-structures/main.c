@@ -2,6 +2,14 @@
 
 #include "dynamic_array.h"
 
+// Here are some example about how to create types with many qualifiers
+typedef const char *const_char_ptr;
+IMPLEMENT_DYN_ARRAY(const_char_ptr, NULL);
+
+// Even an array of error handler functions
+typedef void (*error_handler_t)(const char *msg);
+IMPLEMENT_DYN_ARRAY(error_handler_t, NULL);
+
 IMPLEMENT_DYN_ARRAY(int, 0);
 
 int main() {
