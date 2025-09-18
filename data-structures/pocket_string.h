@@ -19,7 +19,7 @@ string_t string_create(const char *c_str) {
     string_t str;
     size_t len = strlen(c_str);
     // +1 for the nullterminated char
-    str.data = dyn_array_char_init(len+1);
+    str.data = dyn_array_char_init(len + 1);
     for (size_t i = 0; i < len; i++) {
         dyn_array_char_push_back(str.data, c_str[i]);
     }
@@ -40,7 +40,7 @@ string_t string_copy(const string_t *src_str) {
     if (likely_branch(src_str && src_str->data)) {
         str.data = dyn_array_char_init(src_str->data->size);
         for (size_t i = 0; i < src_str->data->size; i++) {
-            str.data[i] = src_str->data[i];
+            str.data->data[i] = src_str->data->data[i];
         }
     }
     return str;
@@ -84,7 +84,7 @@ char string_front(const string_t *str) {
 }
 
 char string_back(const string_t *str) {
-    if (likely_branch(string_size(str) > 0)) return dyn_array_char_get(str->data, str->data->size - 1);
+    if (likely_branch(string_size(str) > 0)) return dyn_array_char_get(str->data, str->data->size - 2);
     return '\0';
 }
 
@@ -94,7 +94,7 @@ char string_back(const string_t *str) {
 
 int string_push_back(string_t *str, char ch) { return dyn_array_char_insert(str->data, str->data->size - 1, ch); }
 
-int string_pop_back(string_t *str) { return dyn_array_char_remove(str->data, str->data->size - 1); }
+int string_pop_back(string_t *str) { return dyn_array_char_remove(str->data, str->data->size - 2); }
 
 int string_append_cstr(string_t *dst_str, const char *src) {
     if (likely_branch(string_size(dst_str) >= 0)) {
@@ -106,7 +106,7 @@ int string_append_cstr(string_t *dst_str, const char *src) {
         for (size_t i = 0; i < src_len; i++) {
             dyn_array_char_push_back(dst_str->data, src[i]);
         }
-        if (dyn_array_char_get(dst_str->data, dst_str->data->size-1) != '\0') {
+        if (dyn_array_char_get(dst_str->data, dst_str->data->size - 1) != '\0') {
             dyn_array_char_push_back(dst_str->data, '\0');
         }
     }

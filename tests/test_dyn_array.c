@@ -6,9 +6,6 @@
 /* include your dynamic array header (assumes it is in the project root) */
 #include "dynamic_array.h"
 
-/* Instantiate the dynamic array for int type.
- * EMPTY_TYPE = 0 (returned on errors / empty pop / OOB get)
- */
 IMPLEMENT_DYN_ARRAY(int, 0);
 
 /* Helper to create a dyn array with a small capacity to force growth */

@@ -9,13 +9,15 @@ if (NOT EXISTS "${UNITY_DIR}/src/unity.c")
         "  git submodule update --init --recursive")
 endif()
 
-# Test executable
-set(TEST_SRC
+########################################
+# Dynamic Array Tests
+########################################
+set(DYN_ARRAY_TEST_SRC
     test_dyn_array.c
     ${UNITY_DIR}/src/unity.c
 )
 
-add_executable(dyn_array_tests ${TEST_SRC})
+add_executable(dyn_array_tests ${DYN_ARRAY_TEST_SRC})
 
 target_include_directories(dyn_array_tests PRIVATE
     ${CMAKE_SOURCE_DIR}/data-structures/
@@ -24,5 +26,23 @@ target_include_directories(dyn_array_tests PRIVATE
 
 target_compile_definitions(dyn_array_tests PRIVATE UNITY_INCLUDE_DOUBLE_SUPPORT)
 
-# Add test to CTest
 add_test(NAME dyn_array_tests COMMAND dyn_array_tests)
+
+########################################
+# String Tests
+########################################
+set(STRING_TEST_SRC
+    test_string.c
+    ${UNITY_DIR}/src/unity.c
+)
+
+add_executable(string_tests ${STRING_TEST_SRC})
+
+target_include_directories(string_tests PRIVATE
+    ${CMAKE_SOURCE_DIR}/data-structures/
+    ${UNITY_DIR}/src
+)
+
+target_compile_definitions(string_tests PRIVATE UNITY_INCLUDE_DOUBLE_SUPPORT)
+
+add_test(NAME string_tests COMMAND string_tests)
