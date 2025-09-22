@@ -7,15 +7,25 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* ===== Utility macros ===== */
+#if defined(__GNUC__) || defined(__clang__)
 #ifndef likely_branch
 #define likely_branch(x) __builtin_expect(!!(x), 1)
 #endif
+
 #ifndef unlikely_branch
 #define unlikely_branch(x) __builtin_expect(!!(x), 0)
 #endif
+#else
+// Fallback for other compilers
+#ifndef likely_branch
+#define likely_branch(x) (x)
+#endif
 
-/* ===== Macro-based Generic Hash Map ===== */
+#ifndef unlikely_branch
+#define unlikely_branch(x) (x)
+#endif
+#endif
+
 #define HASH_MAP_DECLARE(DECL_NAME, KEY_TYPE, VALUE_TYPE)                                                          \
     /* Default FNV-1a hash */                                                                                      \
     static inline uint64_t fnv_1a_hash_bytes(const void *data, size_t len) {                                       \

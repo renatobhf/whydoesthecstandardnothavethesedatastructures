@@ -1,11 +1,16 @@
 #ifndef _POCKET_DATA_STRUCTURES_STRING_H
 #define _POCKET_DATA_STRUCTURES_STRING_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 #include <string.h>
 
 #include "dynamic_array.h"
-IMPLEMENT_DYN_ARRAY(char, 0);
+DYN_ARRAY_DECLARE(dyn_array_char, char);
+DYN_ARRAY_IMPLEMENT(dyn_array_char, char);
 
 typedef struct string_t {
     dyn_array_char_t *data;
@@ -19,7 +24,7 @@ string_t string_create(const char *c_str) {
     string_t str;
     size_t len = strlen(c_str);
     // +1 for the nullterminated char
-    str.data = dyn_array_char_init(len + 1);
+    str.data = dyn_array_char_create(len + 1);
     for (size_t i = 0; i < len; i++) {
         dyn_array_char_push_back(str.data, c_str[i]);
     }
@@ -29,7 +34,7 @@ string_t string_create(const char *c_str) {
 
 string_t string_create_empty() {
     string_t str;
-    str.data = dyn_array_char_init(1);
+    str.data = dyn_array_char_create(1);
     dyn_array_char_push_back(str.data, '\0');
     return str;
 }
@@ -38,7 +43,7 @@ string_t string_copy(const string_t *src_str) {
     string_t str;
     str.data = NULL;
     if (likely_branch(src_str && src_str->data)) {
-        str.data = dyn_array_char_init(src_str->data->size);
+        str.data = dyn_array_char_create(src_str->data->size);
         for (size_t i = 0; i < src_str->data->size; i++) {
             str.data->data[i] = src_str->data->data[i];
         }
@@ -142,4 +147,7 @@ int string_compare(const string_t *a, const string_t *b) { return strcmp(string_
 
 int string_equals(const string_t *a, const string_t *b) { return string_compare(a, b) == 0; }
 
+#ifdef __cplusplus
+}
+#endif
 #endif  // _POCKET_DATA_STRUCTURES_STRING_H

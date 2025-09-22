@@ -6,10 +6,11 @@
 /* include your dynamic array header (assumes it is in the project root) */
 #include "dynamic_array.h"
 
-IMPLEMENT_DYN_ARRAY(int, 0);
+DYN_ARRAY_DECLARE(dyn_array_int, int);
+DYN_ARRAY_IMPLEMENT(dyn_array_int, int);
 
 /* Helper to create a dyn array with a small capacity to force growth */
-static dyn_array_int_t *make_small_array(void) { return dyn_array_int_init(2); }
+static dyn_array_int_t *make_small_array(void) { return dyn_array_int_create(2); }
 
 void setUp(void) {}
 void tearDown(void) {}

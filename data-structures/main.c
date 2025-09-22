@@ -8,14 +8,16 @@
 
 // Here are some examples about how to create types with many qualifiers
 typedef const char *const_char_ptr;
-IMPLEMENT_DYN_ARRAY(const_char_ptr, NULL);
+DYN_ARRAY_DECLARE(da_cstr, const_char_ptr);
 
 // An array of function pointers
 typedef void (*error_handler_t)(const char *msg);
-IMPLEMENT_DYN_ARRAY(error_handler_t, NULL);
+DYN_ARRAY_DECLARE(da_errhandler, error_handler_t);
 
 // Simple int array
-IMPLEMENT_DYN_ARRAY(int, 0);
+DYN_ARRAY_DECLARE(dyn_array_int, int);
+DYN_ARRAY_IMPLEMENT(dyn_array_int, int);
+
 void dynamic_array_examples() {
     struct dyn_array_int_t *arr = dyn_array_int_create(4);
 
@@ -74,10 +76,9 @@ void hash_map_examples(void) {
 
     // Iterate manually
     cstr_double_map_it_t it = cstr_double_map_it_begin(&map);
-    while (it.index < map.capacity) {
+    do {
         printf("Key=%s Value=%f\n", cstr_double_map_it_key(&it), cstr_double_map_it_value(&it));
-        if (!cstr_double_map_it_next(&it)) break;
-    }
+    } while (cstr_double_map_it_next(&it));
 
     cstr_double_map_free(&map);
 }
