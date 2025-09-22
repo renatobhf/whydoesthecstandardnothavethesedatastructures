@@ -46,3 +46,22 @@ target_include_directories(string_tests PRIVATE
 target_compile_definitions(string_tests PRIVATE UNITY_INCLUDE_DOUBLE_SUPPORT)
 
 add_test(NAME string_tests COMMAND string_tests)
+
+########################################
+# Hash Map Tests
+########################################
+set(STRING_TEST_SRC
+    test_hash_map.c
+    ${UNITY_DIR}/src/unity.c
+)
+
+add_executable(hash_map_tests ${STRING_TEST_SRC})
+
+target_include_directories(hash_map_tests PRIVATE
+    ${CMAKE_SOURCE_DIR}/data-structures/
+    ${UNITY_DIR}/src
+)
+
+target_compile_definitions(hash_map_tests PRIVATE UNITY_INCLUDE_DOUBLE_SUPPORT)
+
+add_test(NAME hash_map_tests COMMAND hash_map_tests)
