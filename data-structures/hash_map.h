@@ -26,6 +26,14 @@
 #endif
 #endif
 
+#ifndef HASH_MAP_MAX_LOAD_FACTOR
+#define HASH_MAP_MAX_LOAD_FACTOR 0.75
+#endif
+
+#ifndef HASH_MAP_GROWTH_FACTOR
+#define HASH_MAP_GROWTH_FACTOR 2
+#endif
+
 #define HASH_MAP_DECLARE(DECL_NAME, KEY_TYPE, VALUE_TYPE)                                                          \
     /* Default FNV-1a hash */                                                                                      \
     static inline uint64_t fnv_1a_hash_bytes(const void *data, size_t len) {                                       \
@@ -87,8 +95,7 @@
         uint64_t hash = hash_fn(key);                                                                                 \
         size_t index = hash & (capacity - 1);                                                                         \
         DECL_NAME##_entry_t *tombstone = NULL;                                                                        \
-                                                                                                                      \
-        for (;;) {                                                                                                    \
+        while (1) {                                                                                                   \
             DECL_NAME##_entry_t *entry = &entries[index];                                                             \
             if (entry->key == (KEY_TYPE)0) { /* empty slot */                                                         \
                 return tombstone ? tombstone : entry;                                                                 \
@@ -118,14 +125,41 @@
         map->occupancy = 0;                                                                                           \
     }                                                                                                                 \
                                                                                                                       \
+    static bool DECL_NAME##_rehash(DECL_NAME##_t *map, size_t new_capacity) {                                         \
+        new_capacity = 1;                                                                                             \
+        while (new_capacity < new_capacity) new_capacity <<= 1;                                                       \
+                                                                                                                      \
+        DECL_NAME##_entry_t *new_entries = calloc(new_capacity, sizeof(DECL_NAME##_entry_t));                         \
+        if (!new_entries) return false;                                                                               \
+                                                                                                                      \
+        for (size_t i = 0; i < map->capacity; i++) {                                                                  \
+            if (map->entries[i].key != (KEY_TYPE)0) {                                                                 \
+                uint64_t hash = map->hash_fn(map->entries[i].key);                                                    \
+                size_t index = hash & (new_capacity - 1);                                                             \
+                while (new_entries[index].key != (KEY_TYPE)0) {                                                       \
+                    index = (index + 1) & (new_capacity - 1);                                                         \
+                }                                                                                                     \
+                new_entries[index] = map->entries[i];                                                                 \
+            }                                                                                                         \
+        }                                                                                                             \
+                                                                                                                      \
+        free(map->entries);                                                                                           \
+        map->entries = new_entries;                                                                                   \
+        map->capacity = new_capacity;                                                                                 \
+        return true;                                                                                                  \
+    }                                                                                                                 \
+                                                                                                                      \
     VALUE_TYPE *DECL_NAME##_find(DECL_NAME##_t *map, KEY_TYPE key) {                                                  \
         if (map->occupancy == 0) return NULL;                                                                         \
         DECL_NAME##_entry_t *entry =                                                                                  \
             find_entry_##KEY_TYPE##_##VALUE_TYPE(map->entries, map->capacity, key, map->keys_equal_fn, map->hash_fn); \
         return entry->key == (KEY_TYPE)0 ? NULL : &entry->value;                                                      \
     }                                                                                                                 \
-                                                                                                                      \
+\
     bool DECL_NAME##_insert(DECL_NAME##_t *map, KEY_TYPE key, VALUE_TYPE value) {                                     \
+        if (map->occupancy + 1 > map->capacity  * HASH_MAP_MAX_LOAD_FACTOR) {                                                          \
+            if (!DECL_NAME##_rehash(map, map->capacity * HASH_MAP_GROWTH_FACTOR)) return false;                                            \
+        }                                                                                                             \
         DECL_NAME##_entry_t *entry =                                                                                  \
             find_entry_##KEY_TYPE##_##VALUE_TYPE(map->entries, map->capacity, key, map->keys_equal_fn, map->hash_fn); \
         if (entry->key == (KEY_TYPE)0) map->occupancy++;                                                              \
