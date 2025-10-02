@@ -173,7 +173,7 @@
     DECL_NAME##_it_t DECL_NAME##_it_begin(DECL_NAME##_t *map) {                                                       \
         DECL_NAME##_it_t it = {map, 0};                                                                               \
         /* Advance until we find a non-empty slot */                                                                  \
-        while (it.index < map->capacity && map->entries[it.index].key.status == OCCUPIDED) {                          \
+        while (it.index < map->capacity && map->entries[it.index].status == OCCUPIED) {                               \
             it.index++;                                                                                               \
         }                                                                                                             \
         return it;                                                                                                    \
@@ -182,7 +182,7 @@
     bool DECL_NAME##_it_next(DECL_NAME##_it_t *it) {                                                                  \
         if (!it->map) return false;                                                                                   \
         it->index++;                                                                                                  \
-        while (it->index < it->map->capacity && it->map->entries[it->index].status == OCCUPIDED) {                    \
+        while (it->index < it->map->capacity && it->map->entries[it->index].status == OCCUPIED) {                     \
             it->index++;                                                                                              \
         }                                                                                                             \
         return it->index < it->map->capacity;                                                                         \

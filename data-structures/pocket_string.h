@@ -9,8 +9,8 @@ extern "C" {
 #include <string.h>
 
 #include "dynamic_array.h"
-DYN_ARRAY_DECLARE(dyn_array_char, char);
-DYN_ARRAY_IMPLEMENT(dyn_array_char, char);
+DYN_ARRAY_DECLARE(dyn_array_char, char)
+DYN_ARRAY_IMPLEMENT(dyn_array_char, char)
 
 typedef struct string_t {
     dyn_array_char_t *data;
@@ -102,19 +102,17 @@ int string_push_back(string_t *str, char ch) { return dyn_array_char_insert(str-
 int string_pop_back(string_t *str) { return dyn_array_char_remove(str->data, str->data->size - 2); }
 
 int string_append_cstr(string_t *dst_str, const char *src) {
-    if (likely_branch(string_size(dst_str) >= 0)) {
-        size_t dst_len = string_size(dst_str);
-        size_t src_len = strlen(src);
-        // Remove '\0'
-        dst_str->data->size -= 1;
+    size_t src_len = strlen(src);
+    // Remove '\0'
+    dst_str->data->size -= 1;
 
-        for (size_t i = 0; i < src_len; i++) {
-            dyn_array_char_push_back(dst_str->data, src[i]);
-        }
-        if (dyn_array_char_get(dst_str->data, dst_str->data->size - 1) != '\0') {
-            dyn_array_char_push_back(dst_str->data, '\0');
-        }
+    for (size_t i = 0; i < src_len; i++) {
+        dyn_array_char_push_back(dst_str->data, src[i]);
     }
+    if (dyn_array_char_get(dst_str->data, dst_str->data->size - 1) != '\0') {
+        dyn_array_char_push_back(dst_str->data, '\0');
+    }
+
     return 0;
 }
 
